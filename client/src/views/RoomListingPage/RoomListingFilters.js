@@ -52,7 +52,7 @@ function RoomListingFilters () {
         name="searchString"
         placeholder="Search..."
         value={localFilters.searchString}
-        onChange={(value) => handleFilterChange('searchString', value)}
+        onChange={(e) => handleFilterChange('searchString', e.target.value)}
       />
       <Flex>
         <select

@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import Colors from 'constants/Colors'
 import BaseLoader from 'components/ui/BaseLoader'
 import Flex from 'components/ui/Flex'
+import { BaseFormContext } from './BaseForm'
 
 function BaseButton ({
   children,
@@ -11,12 +12,16 @@ function BaseButton ({
   disabled,
   ...rest
 }) {
+  const context = useContext(BaseFormContext)
+  const inForm = !!context && Object.keys(context).length
+  const isLoading = loading || !!(inForm && context.isSubmitting)
+
   return (
     <StyledButton
-      disabled={disabled || loading}
+      disabled={disabled || isLoading}
       {...rest}
     >
-      {loading && <StyledLoader/>}
+      {isLoading && <StyledLoader/>}
       {children}
     </StyledButton>
   )
@@ -24,7 +29,7 @@ function BaseButton ({
 
 BaseButton.propTypes = {
   fullWidth: PropTypes.bool,
-  children: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  children: PropTypes.node,
   loading: PropTypes.bool,
   disabled: PropTypes.bool,
 }

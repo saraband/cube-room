@@ -1,7 +1,7 @@
 import React from 'react'
 import PixelsVisualizer from 'components/PixelsVisualizer/PixelsVisualizer'
 import styled from 'styled-components'
-import { Formik, Form, Field } from 'formik'
+import { Field } from 'formik'
 import { gql, useMutation } from '@apollo/client'
 import Colors from 'constants/Colors'
 import { useHistory } from 'react-router-dom'
@@ -12,6 +12,7 @@ import Flex from 'components/ui/Flex'
 import BaseButton from 'components/form/BaseButton'
 import ColorPicker from './ColorPicker'
 import * as Yup from 'yup'
+import BaseForm from 'components/form/BaseForm'
 import Layout from 'components/ui/Layout'
 
 const CREATE_ROOM = gql`
@@ -36,7 +37,7 @@ function CreateRoom () {
 
   return (
     <Layout title="Create a room" itemsCenter>
-      <Formik
+      <StyledForm
         validateOnChange={false}
         initialValues={{
           name: '',
@@ -58,44 +59,37 @@ function CreateRoom () {
           }
         }}
       >
-        {({ isSubmitting }) => (
-          <StyledForm>
-            <Left>
-              <ColorPicker/>
-              <BaseInput
-                name="name"
-                placeholder="Name"
-                showErrorMessage
-                disabled={isSubmitting}
-              />
-              <BaseTextarea
-                name="description"
-                placeholder="Description"
-                disabled={isSubmitting}
-              />
-              <SubmitButton loading={isSubmitting}>
-                Create room
-              </SubmitButton>
-            </Left>
-            <Field name="pixels">
-              {({ field: { value }, form: { setFieldValue } }) => (
-                <StyledPixelsVisualizer
-                  size={400}
-                  pixels={value}
-                  editable
-                  showGuidance
-                  onChange={(pixels) => setFieldValue('pixels', pixels)}
-                />
-              )}
-            </Field>
-          </StyledForm>
-        )}
-      </Formik>
+        <Left>
+          <ColorPicker/>
+          <BaseInput
+            name="name"
+            placeholder="Name"
+          />
+          <BaseTextarea
+            name="description"
+            placeholder="Description"
+          />
+          <SubmitButton>
+            Create room
+          </SubmitButton>
+        </Left>
+        <Field name="pixels">
+          {({ field: { value }, form: { setFieldValue } }) => (
+            <StyledPixelsVisualizer
+              size={400}
+              pixels={value}
+              editable
+              showGuidance
+              onChange={(pixels) => setFieldValue('pixels', pixels)}
+            />
+          )}
+        </Field>
+      </StyledForm>
     </Layout>
   )
 }
 
-const StyledForm = styled(Form)`
+const StyledForm = styled(BaseForm)`
   display: flex;
 `
 

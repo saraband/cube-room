@@ -4,11 +4,11 @@ import styled from 'styled-components'
 import Flex from 'components/ui/Flex'
 import BaseLoader from 'components/ui/BaseLoader'
 import BaseInput from 'components/form/BaseInput'
+import BaseForm from 'components/form/BaseForm'
 import Colors from 'constants/Colors'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ChatMessage from './ChatMessage'
 import Faker from 'faker/locale/en'
-import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 
 const SEND_CHAT_MESSAGE = gql`
@@ -56,6 +56,8 @@ const SendChatMessageSchema = Yup.object().shape({
   message: Yup.string().required('This field is required'),
 })
 
+const RANDOM_USERNAME = Faker.name.firstName()
+
 function Chat () {
   const chatContainerRef = useRef(null)
   const [sendChatMessage] = useMutation(SEND_CHAT_MESSAGE)
@@ -98,7 +100,7 @@ function Chat () {
     }
   }, [data])
 
-  async function submitChatMessage ({ values: { username, message }, setFieldValue }) {
+  async function submitChatMessage ({ values: { username, message }, setFieldValue, ...rest }) {
     try {
       await sendChatMessage({
         variables: {
@@ -112,6 +114,7 @@ function Chat () {
 
       // Reset message input
       setFieldValue('message', '')
+      console.error(rest)
     } catch (error) {
       console.error(error)
     }
@@ -121,35 +124,33 @@ function Chat () {
     <Container>
       {/* Messages list */}
       <MessagesContainer ref={chatContainerRef}>
-        {loading
+        {!data && loading
           ? <ChatLoader/>
           : data.room.messages.map((message) => <ChatMessage key={message.id} {...message}/>)
         }
       </MessagesContainer>
 
       {/* Send message form */}
-      <Formik
+      <ChatMessageForm
         initialValues={{
-          username: Faker.name.firstName(),
+          username: RANDOM_USERNAME,
           message: '',
         }}
         validationSchema={SendChatMessageSchema}
-        onSubmit={submitChatMessage}
       >
-        {({ isSubmitting, errors, ...formAttrs }) => (
-          <ChatMessageForm>
-            <UsernameInput disabled={isSubmitting}/>
+        {(formContext) => (
+          <>
+            <UsernameInput/>
             <ChatMessageInput
-              disabled={isSubmitting}
               onKeyDown={({ key }) => {
-                if (key === 'Enter' && !Object.keys(errors).length) {
-                  submitChatMessage(formAttrs)
+                if (key === 'Enter') {
+                  submitChatMessage(formContext)
                 }
               }}
             />
-          </ChatMessageForm>
+          </>
         )}
-      </Formik>
+      </ChatMessageForm>
     </Container>
   )
 }
@@ -184,7 +185,7 @@ const MessagesContainer = styled(Flex).attrs(() => ({
   padding: 16px;
 `
 
-const ChatMessageForm = styled(Form)`
+const ChatMessageForm = styled(BaseForm)`
   display: flex;
   align-items: center;
   margin-top: 16px;
