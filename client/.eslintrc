@@ -1,0 +1,26 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "rules": {
+    "quotes": ["error", "single"],
+    "semi": ["error", "never"],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "only-multiline"
+    }],
+    "indent": ["error", 2, {
+      "ignoredNodes": ["JSXElement"]
+    }],
+    "react/jsx-indent": ["error", 2]
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  }
+}

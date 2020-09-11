@@ -1,0 +1,15 @@
+{
+  "restartable": "rs",
+  "verbose": false,
+  "watch": [
+    "./app/**/*",
+    "db/**/*"
+  ],
+  "execMap": {
+    "js": "babel-node"
+  },
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js,json,env,graphql"
+}
