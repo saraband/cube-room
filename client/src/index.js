@@ -12,15 +12,18 @@ import * as serviceWorker from './serviceWorker'
 import store from './store'
 import './index.css'
 
+const HTTP_SERVER_URL = process.env.HTTP_SERVER_URL || 'http://localhost:4000'
+const WS_SERVER_URL = process.env.WS_SERVER_URL || 'ws://localhost:4000'
+
 const wsLink = new WebSocketLink({
-  uri: 'ws://localhost:4000/graphql',
+  uri: WS_SERVER_URL,
   options: {
     reconnect: true,
   },
 })
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: HTTP_SERVER_URL,
 })
 
 const splitLink = split(

@@ -2,7 +2,7 @@
   "restartable": "rs",
   "verbose": false,
   "watch": [
-    "./app/**/*",
+    "app/**/*",
     "db/**/*"
   ],
   "execMap": {
