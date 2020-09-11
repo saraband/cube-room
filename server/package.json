@@ -4,9 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon app/index.js --config app/app.nodemon.json",
-    "build": "babel app --out-dir build",
-    "start": "node build/index.js",
+    "dev": "nodemon app/index.js --config server.nodemon.json",
+    "build": "babel app --out-file server-build.js",
+    "start": "node ./server-build.js",
     "sequelize": "sequelize",
     "heroku-postbuild": "npm run sequelize db:migrate && npm run sequelize db:seed:undo:all && npm run sequelize db:seed:all"
   },
