@@ -10,6 +10,7 @@ function BaseButton ({
   children,
   loading,
   disabled,
+  icon,
   ...rest
 }) {
   const context = useContext(BaseFormContext)
@@ -22,6 +23,7 @@ function BaseButton ({
       {...rest}
     >
       {isLoading && <StyledLoader/>}
+      {!isLoading && icon && <Icon src={icon}/>}
       {children}
     </StyledButton>
   )
@@ -32,11 +34,16 @@ BaseButton.propTypes = {
   children: PropTypes.node,
   loading: PropTypes.bool,
   disabled: PropTypes.bool,
+  icon: PropTypes.string,
 }
 
 BaseButton.defaultProps = {
   fullWidth: false,
 }
+
+const Icon = styled.img`
+  margin-right: 8px;
+`
 
 const StyledButton = styled(Flex).attrs(() => ({
   as: 'button',

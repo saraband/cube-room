@@ -1,6 +1,6 @@
 import React from 'react'
 import Flex from 'components/ui/Flex'
-import EnterSrc from 'assets/icons/enter.svg'
+import TargetSrc from 'assets/icons/target.svg'
 import { Link } from 'react-router-dom'
 import Routes, { generateRoute } from 'constants/Routes'
 import styled from 'styled-components'
@@ -24,7 +24,7 @@ function RoomThumbnailLink ({
       <Container>
         <PixelsContainer>
           <Overlay>
-            <img src={EnterSrc} alt="Access room"/>
+            <img src={TargetSrc} alt="Access room"/>
           </Overlay>
           <PixelsVisualizer
             size={120}

@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom'
 import Routes, { generateRoute } from 'constants/Routes'
 import BaseButton from 'components/form/BaseButton'
 import { SET_ROOM_LISTING_FILTERS } from 'store'
+import WandSrc from 'assets/wand.svg'
 
 export const OrderByOptions = [
   { key: 'newest', text: 'Newest' },
@@ -61,9 +62,7 @@ function RoomListingFilters () {
         >
           {OrderByOptions.map(({ key, text }) => <option key={key} value={key}>{text}</option>)}
         </select>
-        <CreateRoomButton onClick={() => history.push(generateRoute(Routes.CREATE_ROOM))}>
-          Create a room
-        </CreateRoomButton>
+        <CreateRoomButton onClick={() => history.push(generateRoute(Routes.CREATE_ROOM))}/>
       </Flex>
     </StyledFilters>
   )
@@ -75,7 +74,10 @@ const StyledFilters = styled(Flex).attrs(() => ({
 
 `
 
-const CreateRoomButton = styled(BaseButton)`
+const CreateRoomButton = styled(BaseButton).attrs(() => ({
+  children: 'Create a room',
+  icon: WandSrc,
+}))`
   margin-left: 16px;
 `
 

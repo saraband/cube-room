@@ -15,6 +15,7 @@ import * as Yup from 'yup'
 import BaseForm from 'components/form/BaseForm'
 import Layout from 'components/ui/Layout'
 import useTitle from 'helpers/useTitle'
+import WandSrc from 'assets/wand.svg'
 
 const CREATE_ROOM = gql`
   mutation CreateRoom($input: CreateRoomInput!) {
@@ -71,9 +72,7 @@ function CreateRoom () {
             name="description"
             placeholder="Description"
           />
-          <SubmitButton>
-            Create room
-          </SubmitButton>
+          <SubmitButton/>
         </Left>
         <Field name="pixels">
           {({ field: { value }, form: { setFieldValue } }) => (
@@ -107,6 +106,8 @@ const Left = styled(Flex).attrs(() => ({
 const SubmitButton = styled(BaseButton).attrs(() => ({
   type: 'submit',
   fullWidth: true,
+  children: 'Create a room',
+  icon: WandSrc,
 }))`
   align-self: flex-end;
 `
