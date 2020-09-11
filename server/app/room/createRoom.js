@@ -1,6 +1,5 @@
 import { GraphQLError } from 'graphql'
 import { safeTrim } from '@app/helpers/string'
-import PixelsColors from '@/../client/src/constants/Pixels'
 
 const typeDefs = `
   input CreateRoomInput {
@@ -39,7 +38,7 @@ function validateRoomCreationInput ({ name, pixels }) {
       }
 
       // Not a valid color key
-      if (element < 0 || element >= PixelsColors.length) {
+      if (element < 0 || element > 15) {
         return false
       }
     }

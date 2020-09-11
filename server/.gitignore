@@ -1,5 +1,5 @@
 .env
-dist
+build
 yarn-error.log
 node_modules
 .DS_STORE
