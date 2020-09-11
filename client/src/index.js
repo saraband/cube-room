@@ -12,8 +12,8 @@ import * as serviceWorker from './serviceWorker'
 import store from './store'
 import './index.css'
 
-const HTTP_SERVER_URL = process.env.REACT_APP_HTTP_SERVER_URL || 'http://localhost:4000'
-const WS_SERVER_URL = process.env.REACT_APP_WS_SERVER_URL || 'ws://localhost:4000'
+const HTTP_SERVER_URL = process.env.REACT_APP_HTTP_SERVER_URL || 'http://localhost:4000/graphql'
+const WS_SERVER_URL = process.env.REACT_APP_WS_SERVER_URL || 'ws://localhost:4000/graphql'
 
 const wsLink = new WebSocketLink({
   uri: WS_SERVER_URL,
