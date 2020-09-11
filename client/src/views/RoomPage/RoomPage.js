@@ -7,6 +7,7 @@ import Flex from 'components/ui/Flex'
 import Chat from './Chat'
 import PixelsVisualizer from 'components/PixelsVisualizer/PixelsVisualizer'
 import BaseLoader from 'components/ui/BaseLoader'
+import useTitle from 'helpers/useTitle'
 
 const GET_ROOM_INFO = gql`
   query GetRoomInfo($roomId: ID!) {
@@ -36,6 +37,8 @@ function Room () {
   })
 
   const room = data?.room || {}
+
+  useTitle(`Cube-room | ${room.name || 'Loading room...'}`, [room.name])
 
   return (
     <Layout title={room.name}>

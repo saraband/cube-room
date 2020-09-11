@@ -8,6 +8,7 @@ import BaseLoader from 'components/ui/BaseLoader'
 import Flex from 'components/ui/Flex'
 import BaseButton from 'components/form/BaseButton'
 import RoomListingFilters from './RoomListingFilters'
+import useTitle from 'helpers/useTitle'
 
 export const GET_ALL_ROOMS = gql`
   query GetRoomListing($filters: GetAllRoomsInput, $offset: Int, $limit: Int) {
@@ -32,6 +33,7 @@ function RoomListingLoader () {
 const MAX_ROOMS_PER_LOAD = 35
 
 function RoomListing () {
+  useTitle('Cube-room | Index')
   const filters = useSelector(state => state.roomListingFilters)
   const [showLoadMoreButton, setShowLoadMoreButton] = useState(true)
 

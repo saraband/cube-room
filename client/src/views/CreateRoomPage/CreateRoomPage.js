@@ -14,6 +14,7 @@ import ColorPicker from './ColorPicker'
 import * as Yup from 'yup'
 import BaseForm from 'components/form/BaseForm'
 import Layout from 'components/ui/Layout'
+import useTitle from 'helpers/useTitle'
 
 const CREATE_ROOM = gql`
   mutation CreateRoom($input: CreateRoomInput!) {
@@ -32,6 +33,7 @@ const CreateRoomSchema = Yup.object().shape({
 const BLANK_ROOM_PIXELS = JSON.stringify(new Array(400).fill(15))
 
 function CreateRoom () {
+  useTitle('Cube-room | Create a new room')
   const history = useHistory()
   const [createRoom] = useMutation(CREATE_ROOM)
 
