@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon app/index.js --config server.nodemon.json",
-    "build": "babel app --out-file server-build.js",
-    "start": "node ./server-build.js",
+    "build": "babel app --out-dir build",
+    "start": "node build/index.js",
     "sequelize": "sequelize",
-    "heroku-postbuild": "npm run sequelize db:migrate && npm run sequelize db:seed:undo:all && npm run sequelize db:seed:all"
+    "heroku-postbuild": "npm run build && npm run sequelize db:migrate && npm run sequelize db:seed:undo:all && npm run sequelize db:seed:all"
   },
   "dependencies": {
     "@babel/cli": "^7.11.6",
