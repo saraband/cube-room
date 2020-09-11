@@ -41,7 +41,7 @@ const resolvers = {
         if (searchString) {
           params.where = {
             name: {
-              [Op.like]: `%${searchString}%`,
+              [Op.iLike]: `%${searchString}%`,
             },
           }
         }
