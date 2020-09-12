@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
@@ -46,7 +46,7 @@ function PixelsVisualizer ({
    * Whenever user clicks or drags over the canvas, draw a pixel
    * on the canvas
    */
-  function checkPixelActivation (event) {
+  const checkPixelActivation = useCallback((event) => {
     const { top, left, width, height } = canvasRef.current.getBoundingClientRect()
     const x = event.clientX - left
     const y = event.clientY - top
@@ -60,6 +60,14 @@ function PixelsVisualizer ({
     const pixelX = Math.floor(x / pixelSize)
     const pixelY = Math.floor(y / pixelSize)
 
+    // Pixel color at given coord is already the right color, do nothing
+    const pixelIndex = pixelY * NUM_PIXELS_LINE + pixelX
+
+    if (pixels[pixelIndex] === currentColorKey) {
+      return
+    }
+
+    // Actually draw pixel on canvas
     drawPixel({
       pixelCoords: {
         x: pixelX,
@@ -70,30 +78,31 @@ function PixelsVisualizer ({
       context: canvasRef.current.getContext('2d'),
     })
 
-    const newPixels = [...JSON.parse(pixels)]
-    newPixels[pixelY * NUM_PIXELS_LINE + pixelX] = currentColorKey
+    // Notify pixels change to parent
+    const newPixels = [ ...JSON.parse(pixels) ]
+    newPixels[pixelIndex] = currentColorKey
 
     onChange(JSON.stringify(newPixels))
-  }
+  }, [pixels, onChange])
 
   // Drag over the canvas handlers
-  function onMouseDown (event) {
+  const onMouseDown = useCallback((event) => {
     isDrawing.current = true
 
     checkPixelActivation(event)
-  }
+  }, [checkPixelActivation])
 
-  function onMouseUp () {
+  const onMouseUp = useCallback(() => {
     isDrawing.current = false
-  }
+  }, [])
 
-  function onMouseMove (event) {
+  const onMouseMove = useCallback((event) => {
     if (!isDrawing.current || !canvasRef.current) {
       return
     }
 
     checkPixelActivation(event)
-  }
+  }, [checkPixelActivation])
 
   // Bind canvas event handlers
   useEffect(() => {
@@ -107,7 +116,7 @@ function PixelsVisualizer ({
       document.removeEventListener('mousedown', onMouseDown)
       document.removeEventListener('mouseup', onMouseUp)
     }
-  }, [])
+  }, [onMouseDown, onMouseUp])
 
   return (
     <Container crosshair={editable} {...rest}>

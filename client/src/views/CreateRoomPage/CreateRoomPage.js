@@ -35,6 +35,7 @@ const BLANK_ROOM_PIXELS = JSON.stringify(new Array(400).fill(15))
 
 function CreateRoom () {
   useTitle('Cube-room | Create a new room')
+
   const history = useHistory()
   const [createRoom] = useMutation(CREATE_ROOM)
 
