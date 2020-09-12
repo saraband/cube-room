@@ -33,6 +33,7 @@ function RoomLoader () {
 function Room () {
   const { roomId } = useParams()
   const { loading, data } = useQuery(GET_ROOM_INFO, {
+    fetchPolicy: 'cache-and-network',
     variables: {
       roomId,
     },

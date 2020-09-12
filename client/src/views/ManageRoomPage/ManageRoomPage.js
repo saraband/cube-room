@@ -19,6 +19,7 @@ import BaseForm from 'components/form/BaseForm'
 import Layout from 'components/ui/Layout'
 import useTitle from 'helpers/useTitle'
 import WandSrc from 'assets/icons/wand.svg'
+import BaseLoader from 'components/ui/BaseLoader'
 
 const CREATE_ROOM = gql`
   mutation CreateRoom($input: CreateRoomInput!) {
@@ -32,9 +33,11 @@ const CREATE_ROOM = gql`
 `
 
 const EDIT_ROOM = gql`
-  mutation EditRoom($input: CreateRoomInput!) {
+  mutation EditRoom($input: EditRoomInput!) {
     manageRoom: editRoom(input: $input) {
-      room
+      room {
+        id
+      }
     }
   }
 `
@@ -57,10 +60,18 @@ const CreateRoomSchema = Yup.object().shape({
 
 const EditRoomSchema = Yup.object().shape({
   name: Yup.string().required('This field is required'),
-  password: Yup.string().required('This field is required'),
 })
 
 const BLANK_ROOM_PIXELS = JSON.stringify(new Array(400).fill(15))
+
+function EditRoomLoader () {
+  return (
+    <StyledEditRoomLoader>
+      <BaseLoader size={50}/>
+    </StyledEditRoomLoader>
+  )
+}
+
 
 function ManageRoom ({ action }) {
   const isEdit = action === 'edit'
@@ -82,75 +93,98 @@ function ManageRoom ({ action }) {
   })
 
   const validationSchema = isEdit ? EditRoomSchema : CreateRoomSchema
-  const formInitialValues = {
+  let formInitialValues = {
     name: '',
     description: '',
     pixels: BLANK_ROOM_PIXELS,
+    password: ''
   }
 
-  if (isCreate) {
-    formInitialValues.password = ''
+  if (isEdit && data) {
+    const { room } = data
+
+    formInitialValues.name = room.name
+    formInitialValues.description = room.description
+    formInitialValues.pixels = room.pixels
+    delete formInitialValues.password
   }
 
   return (
     <Layout title={cta} itemsCenter>
-      <StyledForm
-        validateOnChange={false}
-        initialValues={formInitialValues}
-        validationSchema={validationSchema}
-        onSubmit={async (values) => {
-          try {
-            const { data } = await manageRoom({
-              variables: {
+      {loading && <EditRoomLoader/>}
+      {!loading && 
+        <StyledForm
+          validateOnChange={false}
+          initialValues={formInitialValues}
+          validationSchema={validationSchema}
+          onSubmit={async (values) => {
+            try {
+              const variables = {
                 input: values,
-              },
-            })
+              }
 
-            // Creating a room grants direct edit scope access to it
-            // Update local token
-            localStorage.setItem('token', data.manageRoom.token)
+              if (isEdit) {
+                variables.input.roomId = roomId
+              }
 
-            history.push(generateRoute(Routes.ROOM, { roomId: data.manageRoom.room.id }))
-          } catch (error) {
-            console.error(error)
-          }
-        }}
-      >
-        <Left>
-          <ColorPicker/>
-          <BaseInput
-            name="name"
-            placeholder="Name"
-          />
-          {isCreate &&
+              const { data } = await manageRoom({ variables })
+
+              // Creating a room grants direct edit scope access to it
+              // Update local token
+              if (isCreate) {
+                localStorage.setItem('token', data.manageRoom.token)
+              }
+
+              // Redirect to room after either creation or edit
+              history.push(generateRoute(Routes.ROOM, { roomId: data.manageRoom.room.id }))
+            } catch (error) {
+              console.error(error)
+            }
+          }}
+        >
+          <Left>
+            <ColorPicker/>
             <BaseInput
-              name="password"
-              placeholder="Room edit password"
+              name="name"
+              placeholder="Name"
             />
-          }
-          <BaseTextarea
-            name="description"
-            placeholder="Description"
-          />
-          <SubmitButton>
-            {cta}
-          </SubmitButton>
-        </Left>
-        <Field name="pixels">
-          {({ field: { value }, form: { setFieldValue } }) => (
-            <StyledPixelsVisualizer
-              size={400}
-              pixels={value}
-              editable
-              showGuidance
-              onChange={(pixels) => setFieldValue('pixels', pixels)}
+            {isCreate &&
+              <BaseInput
+                name="password"
+                placeholder="Room edit password"
+              />
+            }
+            <BaseTextarea
+              name="description"
+              placeholder="Description"
             />
-          )}
-        </Field>
-      </StyledForm>
+            <SubmitButton>
+              {cta}
+            </SubmitButton>
+          </Left>
+          <Field name="pixels">
+            {({ field: { value }, form: { setFieldValue } }) => (
+              <StyledPixelsVisualizer
+                size={400}
+                pixels={value}
+                editable
+                showGuidance={isCreate}
+                onChange={(pixels) => setFieldValue('pixels', pixels)}
+              />
+            )}
+          </Field>
+        </StyledForm>
+      }
     </Layout>
   )
 }
+
+const StyledEditRoomLoader = styled(Flex).attrs(() => ({
+  justifyCenter: true,
+  itemsCenter: true,
+}))`
+  flex-grow: 1;
+`
 
 const StyledForm = styled(BaseForm)`
   display: flex;
