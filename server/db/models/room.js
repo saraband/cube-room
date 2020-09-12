@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
     pixels: DataTypes.TEXT,
     views: DataTypes.INTEGER,
+    password: DataTypes.STRING,
   }, {})
   room.associate = function (models) {
     models.room.hasMany(models.message)

@@ -2,6 +2,9 @@
 
 const moment = require('moment')
 const Faker = require('faker')
+const { genSaltSync, hashSync } = require('bcryptjs')
+
+const DEFAULT_PASSWORD = hashSync('password', genSaltSync(10))
 
 function randomInteger (min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
@@ -33,10 +36,11 @@ module.exports = {
           return {
             name: Faker.commerce.productName(),
             description: Faker.commerce.productDescription(),
-            createdAt: createdAtDate,
-            updatedAt: createdAtDate,
             views: randomInteger(0, 500),
             pixels: randomPixels(),
+            password: DEFAULT_PASSWORD,
+            createdAt: createdAtDate,
+            updatedAt: createdAtDate,
           }
         }
       ),
