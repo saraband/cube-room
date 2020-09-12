@@ -15,7 +15,7 @@ import * as Yup from 'yup'
 import BaseForm from 'components/form/BaseForm'
 import Layout from 'components/ui/Layout'
 import useTitle from 'helpers/useTitle'
-import WandSrc from 'assets/wand.svg'
+import WandSrc from 'assets/icons/wand.svg'
 
 const CREATE_ROOM = gql`
   mutation CreateRoom($input: CreateRoomInput!) {

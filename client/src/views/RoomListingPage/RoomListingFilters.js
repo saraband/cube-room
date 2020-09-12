@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom'
 import Routes, { generateRoute } from 'constants/Routes'
 import BaseButton from 'components/form/BaseButton'
 import { SET_ROOM_LISTING_FILTERS } from 'store'
-import WandSrc from 'assets/wand.svg'
+import WandSrc from 'assets/icons/wand.svg'
 
 export const OrderByOptions = [
   { key: 'newest', text: 'Newest' },
