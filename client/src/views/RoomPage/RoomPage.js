@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import Layout from 'components/ui/Layout'
 import styled from 'styled-components'
 import Flex from 'components/ui/Flex'
@@ -15,6 +15,19 @@ const GET_ROOM_INFO = gql`
       id
       name
       pixels
+      hasEditScope
+    }
+  }
+`
+
+const UNLOCK_ROOM = gql`
+  mutation UnlockRoom($roomId: ID!, $password: String!) {
+    unlockRoom(roomId: $roomId, password: $password) {
+      token
+      room {
+        id
+        hasEditScope
+      }
     }
   }
 `
@@ -40,8 +53,23 @@ function Room () {
 
   useTitle(`Cube-room | ${room.name || 'Loading room...'}`, [room.name])
 
+  const [password, setPassword] = React.useState('')
+  const [unlockRoom] = useMutation(UNLOCK_ROOM)
+
   return (
     <Layout title={room.name}>
+      <h1>has edit scope: {room.hasEditScope ? 'yes' : 'false'}</h1>
+      <Flex>
+        <input value={password} onChange={(e) => setPassword(e.target.value)}/>
+        <button onClick={async () => {
+          try {
+            const { data } = await unlockRoom({ variables: { roomId, password } })
+            console.error('success ', data)
+          } catch (err) {
+            console.error(err)
+          }
+        }}>unlock</button>
+      </Flex>
       {loading
         ? <RoomLoader/>
         : (

@@ -7,6 +7,7 @@ const typeDefs = `
     description: String
     pixels: String!
     messages: [ChatMessage!]!
+    hasEditScope: Boolean!
     views: Int!
     createdAt: Date!
   }
@@ -18,6 +19,7 @@ const typeDefs = `
 
 const resolvers = {
   Room: {
+    hasEditScope: (room, args, ctx) => !!ctx.user?.roomEditScopeAccess?.[room.id],
     messages: async (room, args, ctx) => {
       incrementViewsCounter(room.id, ctx)
       return room.getMessages()

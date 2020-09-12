@@ -6,8 +6,13 @@ import jwt from 'jsonwebtoken'
 const DAY = 60 * 60 * 24
 
 const typeDefs = `
+  type UnlockRoomPayload {
+    token: String!
+    room: Room!
+  }
+
   extend type Mutation {
-    unlockRoom (roomId: ID!, password: String!): String
+    unlockRoom (roomId: ID!, password: String!): UnlockRoomPayload
   }
 `
 
@@ -24,13 +29,34 @@ const resolvers = {
         throw new GraphQLError('Unable to unlock room: Invalid password')
       }
 
+      /**
+       * Add this room to the user edit scope access and
+       * send back a token that represents that scope access
+       */
+      const existingRoomEditScopeAccess = ctx.user?.roomEditScopeAccess || {}
+      const newRoomEditScopeAccess = {
+        ...existingRoomEditScopeAccess,
+        [roomId]: true,
+      }
+
       const token = jwt.sign(
-        { roomId: room.id },
+        {
+          roomEditScopeAccess: newRoomEditScopeAccess,
+        },
         process.env.JWT_KEY || 'developement_key',
-        {  expiresIn: 7 * DAY },
+        {  expiresIn: 365 * DAY }, // @TODO refresh tokens
       )
 
-      return token
+      // Update ctx.user so sub-resolvers that use ctx.user have correct scope
+      ctx.user = {
+        ...(ctx.user || {}),
+        roomEditScopeAccess: newRoomEditScopeAccess,
+      }
+
+      return {
+        token,
+        room,
+      }
     },
   },
 }

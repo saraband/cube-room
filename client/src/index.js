@@ -2,11 +2,12 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { ApolloClient, InMemoryCache, ApolloProvider, split, HttpLink } from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloProvider, split, from, HttpLink } from '@apollo/client'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { setContext } from '@apollo/client/link/context'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 import store from './store'
@@ -22,24 +23,38 @@ const wsLink = new WebSocketLink({
   },
 })
 
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('token')
+
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    }
+  }
+})
+
 const httpLink = new HttpLink({
   uri: HTTP_SERVER_URL,
 })
 
-const splitLink = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query)
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    )
-  },
-  wsLink,
-  httpLink,
-)
+const link = from([
+  authLink,
+  split(
+    ({ query }) => {
+      const definition = getMainDefinition(query)
+      return (
+        definition.kind === 'OperationDefinition' &&
+        definition.operation === 'subscription'
+      )
+    },
+    wsLink,
+    httpLink,
+  )
+])
 
 const client = new ApolloClient({
-  link: splitLink,
+  link,
   cache: new InMemoryCache(),
 })
 
