@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import Layout from 'components/ui/Layout'
 import styled from 'styled-components'
@@ -14,6 +14,7 @@ import EditSrc from 'assets/icons/edit.svg'
 import BaseInput, { GenericInputStyle } from 'components/form/BaseInput'
 import Colors from 'constants/Colors'
 import { hexToRgbaString } from 'helpers/Color'
+import Routes, { generateRoute } from 'constants/Routes'
 
 const UNLOCK_ROOM = gql`
   mutation UnlockRoom($roomId: ID!, $password: String!) {
@@ -30,9 +31,11 @@ const UNLOCK_ROOM = gql`
 export function EditRoomButton ({ roomId, ...rest }) {
   return (
     <Container {...rest}>
-      <ActionButton>
-        <img src={EditSrc} alt='Edit room'/>
-      </ActionButton>
+      <Link to={generateRoute(Routes.EDIT_ROOM, { roomId })}>
+        <ActionButton>
+          <img src={EditSrc} alt='Edit room'/>
+        </ActionButton>
+      </Link>
     </Container>
   )
 }
