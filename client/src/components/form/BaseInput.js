@@ -13,6 +13,7 @@ export const GenericInputStyle = css`
   border: 1px solid ${p => p.error ? Colors.RED : Colors.GREY};
   box-shadow: 0 0 0 3px ${hexToRgbaString(Colors.LIGHT_BLUE, 0)};
   transition: all 0.3s ease;
+  font-size: 1rem;
 
   &:focus:not(:disabled),
   &:active:not(:disabled) {

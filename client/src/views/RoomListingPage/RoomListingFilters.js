@@ -9,12 +9,13 @@ import Routes, { generateRoute } from 'constants/Routes'
 import BaseButton from 'components/form/BaseButton'
 import { SET_ROOM_LISTING_FILTERS } from 'store'
 import WandSrc from 'assets/icons/wand.svg'
+import BaseSelect from 'components/form/BaseSelect'
 
 export const OrderByOptions = [
-  { key: 'newest', text: 'Newest' },
-  { key: 'oldest', text: 'Oldest' },
-  { key: 'most-viewed', text: 'Most viewed' },
-  { key: 'least-viewed', text: 'Least viewed' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'oldest', label: 'Oldest' },
+  { value: 'most-viewed', label: 'Most viewed' },
+  { value: 'least-viewed', label: 'Least viewed' },
 ]
 
 function RoomListingFilters () {
@@ -56,12 +57,12 @@ function RoomListingFilters () {
         onChange={(e) => handleFilterChange('searchString', e.target.value)}
       />
       <Flex>
-        <select
+        <BaseSelect
           value={localFilters.orderByKey}
           onChange={(e) => handleFilterChange('orderByKey', e.target.value)}
         >
-          {OrderByOptions.map(({ key, text }) => <option key={key} value={key}>{text}</option>)}
-        </select>
+          {OrderByOptions}
+        </BaseSelect>
         <CreateRoomButton onClick={() => history.push(generateRoute(Routes.CREATE_ROOM))}/>
       </Flex>
     </StyledFilters>

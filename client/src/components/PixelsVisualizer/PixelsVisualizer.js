@@ -119,7 +119,11 @@ function PixelsVisualizer ({
   }, [onMouseDown, onMouseUp])
 
   return (
-    <Container crosshair={editable} {...rest}>
+    <Container
+      size={size}
+      editable={editable}
+      {...rest}
+    >
       {isGuidanceVisible &&
         <GuidanceOverlay onMouseDown={() => setGuidanceVisible(false)}>
           Draw here the room of your dreams 🚢
@@ -150,14 +154,16 @@ PixelsVisualizer.defaultProps = {
 
 const StyledCanvas = styled.canvas`
   border-radius: 4px;
-  width: ${p => p.size}px;
-  height: ${p => p.size}px;
+  width: 100%;
+  height: 100%;
 `
 
 const Container = styled(Flex)`
   position: relative;
   display: inline-block;
-  cursor: ${p => p.crosshair ? 'crosshair' : 'auto'};
+  width: ${p => p.size}px;
+  height: ${p => p.size}px;
+  cursor: ${p => p.editable ? 'crosshair' : 'auto'};
   border-radius: 4px;
 `
 

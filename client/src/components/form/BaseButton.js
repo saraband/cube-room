@@ -50,6 +50,7 @@ const StyledButton = styled(Flex).attrs(() => ({
   justifyCenter: true,
   itemsCenter: true,
 }))`
+  font-size: 1rem;
   padding: 8px 16px;
   border-radius: 4px;
   border: 0;
