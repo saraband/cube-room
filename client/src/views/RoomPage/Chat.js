@@ -101,7 +101,7 @@ function Chat () {
     }
   }, [data])
 
-  async function submitChatMessage ({ values: { username, message }, setFieldValue, ...rest }) {
+  async function submitChatMessage ({ values: { username, message }, setFieldValue }) {
     try {
       await sendChatMessage({
         variables: {
@@ -115,7 +115,6 @@ function Chat () {
 
       // Reset message input
       setFieldValue('message', '')
-      console.error(rest)
     } catch (error) {
       console.error(error)
     }
