@@ -33,7 +33,7 @@ const resolvers = {
        * Add this room to the user edit scope access and
        * send back a token that represents that scope access
        */
-      const existingRoomEditScopeAccess = ctx.user?.roomEditScopeAccess || {}
+      const existingRoomEditScopeAccess = ctx?.user?.roomEditScopeAccess || {}
       const newRoomEditScopeAccess = {
         ...existingRoomEditScopeAccess,
         [roomId]: true,

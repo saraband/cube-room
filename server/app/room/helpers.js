@@ -34,3 +34,7 @@ export async function incrementViewsCounter (roomId, ctx) {
 
   return null
 }
+
+export function hasRoomEditScopeAccess (roomId, ctx) {
+  return !!ctx?.user?.roomEditScopeAccess?.[roomId]
+}

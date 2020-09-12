@@ -1,4 +1,4 @@
-import { incrementViewsCounter, getRoom } from './helpers'
+import { incrementViewsCounter, getRoom, hasRoomEditScopeAccess } from './helpers'
 
 const typeDefs = `
   type Room {
@@ -19,7 +19,7 @@ const typeDefs = `
 
 const resolvers = {
   Room: {
-    hasEditScope: (room, args, ctx) => !!ctx.user?.roomEditScopeAccess?.[room.id],
+    hasEditScope: (room, args, ctx) => hasRoomEditScopeAccess(room.id, ctx),
     messages: async (room, args, ctx) => {
       incrementViewsCounter(room.id, ctx)
       return room.getMessages()

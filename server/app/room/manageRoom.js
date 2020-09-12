@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql'
 import { safeTrim } from '@app/helpers/string'
+import { getRoom, hasRoomEditScopeAccess } from './helpers'
 
 const typeDefs = `
   input CreateRoomInput {
@@ -8,15 +9,23 @@ const typeDefs = `
     pixels: String!
   }
 
+  input editRoomInput {
+    roomId: ID!
+    name: String!
+    description: String
+    pixels: String!
+  }
+
   extend type Mutation {
     createRoom (input: CreateRoomInput!): Room!
+    editRoom (input: editRoomInput!): Room!
   }
 `
 
 const PIXELS_TOTAL_NUMBER = 400
 const MAX_SERIALIZED_PIXELS_SIZE = JSON.stringify(new Array(400).fill(15)).length
 
-function validateRoomCreationInput ({ name, pixels }) {
+function validateRoomInput ({ name, pixels }) {
   try {
     // Name does not exist or longer than allowed pixels input
     if (safeTrim(name).length === 0 ||
@@ -52,11 +61,32 @@ function validateRoomCreationInput ({ name, pixels }) {
 const resolvers = {
   Mutation: {
     createRoom: async (root, { input }, ctx) => {
-      if (!validateRoomCreationInput(input)) {
+      if (!validateRoomInput(input)) {
         throw new GraphQLError('Unable to create room: Invalid input')
       }
 
       return ctx.db.room.create(input)
+    },
+    editRoom: async (root, { input }, ctx) => {
+      if (!hasRoomEditScopeAccess(input.roomId, ctx)) {
+        throw new GraphQLError('Unable to update room: No edit scope access')
+      }
+
+      if (!validateRoomInput(input)) {
+        throw new GraphQLError('Unable to update room: Invalid input')
+      }
+
+      const room = await getRoom(input.roomId, ctx)
+
+      if (!room) {
+        throw new GraphQLError('Unable to update room: Invalid room ID')
+      }
+
+      room.name = input.name
+      room.description = input.description
+      room.pixels = input.pixels
+
+      return room.save()
     },
   },
 }
