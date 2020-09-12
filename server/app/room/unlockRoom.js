@@ -1,9 +1,6 @@
 import { GraphQLError } from 'graphql'
 import { compareSync } from 'bcryptjs'
-import { getRoom } from './helpers'
-import jwt from 'jsonwebtoken'
-
-const DAY = 60 * 60 * 24
+import { getRoom, generateEditScopeAccessToken } from './helpers'
 
 const typeDefs = `
   type UnlockRoomPayload {
@@ -33,25 +30,7 @@ const resolvers = {
        * Add this room to the user edit scope access and
        * send back a token that represents that scope access
        */
-      const existingRoomEditScopeAccess = ctx?.user?.roomEditScopeAccess || {}
-      const newRoomEditScopeAccess = {
-        ...existingRoomEditScopeAccess,
-        [roomId]: true,
-      }
-
-      const token = jwt.sign(
-        {
-          roomEditScopeAccess: newRoomEditScopeAccess,
-        },
-        process.env.JWT_KEY || 'developement_key',
-        {  expiresIn: 365 * DAY }, // @TODO refresh tokens
-      )
-
-      // Update ctx.user so sub-resolvers that use ctx.user have correct scope
-      ctx.user = {
-        ...(ctx.user || {}),
-        roomEditScopeAccess: newRoomEditScopeAccess,
-      }
+      const token = generateEditScopeAccessToken(room.id, ctx)
 
       return {
         token,

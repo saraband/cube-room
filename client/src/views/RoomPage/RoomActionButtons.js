@@ -78,7 +78,7 @@ export function UnlockRoomButton ({ roomId, className, ...rest }) {
 
 
 const PasswordInput = styled(BaseInput).attrs(() => ({
-  placeholder: 'Enter room password'
+  placeholder: 'Enter room password',
 }))`
   margin-left: 16px;
   opacity: 0;

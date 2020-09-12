@@ -1,35 +1,53 @@
 import { GraphQLError } from 'graphql'
 import { safeTrim } from '@app/helpers/string'
-import { getRoom, hasRoomEditScopeAccess } from './helpers'
+import { generateEditScopeAccessToken, getRoom, hasRoomEditScopeAccess } from './helpers'
+import { genSaltSync, hashSync } from 'bcryptjs'
+
+const SALT = genSaltSync(10)
 
 const typeDefs = `
   input CreateRoomInput {
     name: String!
     description: String
     pixels: String!
+    password: String!
   }
 
-  input editRoomInput {
+  type CreateRoomPayload {
+    token: String!
+    room: Room!
+  }
+
+  input EditRoomInput {
     roomId: ID!
     name: String!
     description: String
     pixels: String!
   }
 
+  type EditRoomPayload {
+    room: Room!
+  }
+
   extend type Mutation {
-    createRoom (input: CreateRoomInput!): Room!
-    editRoom (input: editRoomInput!): Room!
+    createRoom (input: CreateRoomInput!): CreateRoomPayload!
+    editRoom (input: EditRoomInput!): EditRoomPayload!
   }
 `
 
 const PIXELS_TOTAL_NUMBER = 400
 const MAX_SERIALIZED_PIXELS_SIZE = JSON.stringify(new Array(400).fill(15)).length
 
-function validateRoomInput ({ name, pixels }) {
+function validateRoomInput ({ name, pixels, password }, passwordRequired = true) {
   try {
     // Name does not exist or longer than allowed pixels input
     if (safeTrim(name).length === 0 ||
       pixels.length > MAX_SERIALIZED_PIXELS_SIZE) {
+      return false
+    }
+
+    // Password
+    if (passwordRequired && safeTrim(password).length === 0) {
       return false
     }
     
@@ -65,14 +83,28 @@ const resolvers = {
         throw new GraphQLError('Unable to create room: Invalid input')
       }
 
-      return ctx.db.room.create(input)
+      const room = await ctx.db.room.create({
+        ...input,
+        password: hashSync(input.password, SALT),
+      })
+
+      /**
+       * Add the newly created room to the user edit scope access and
+       * send back a token that represents that scope access
+       */
+      const token = generateEditScopeAccessToken(room.id, ctx)
+
+      return {
+        token,
+        room,
+      }
     },
     editRoom: async (root, { input }, ctx) => {
       if (!hasRoomEditScopeAccess(input.roomId, ctx)) {
         throw new GraphQLError('Unable to update room: No edit scope access')
       }
 
-      if (!validateRoomInput(input)) {
+      if (!validateRoomInput(input, false)) {
         throw new GraphQLError('Unable to update room: Invalid input')
       }
 
@@ -85,8 +117,11 @@ const resolvers = {
       room.name = input.name
       room.description = input.description
       room.pixels = input.pixels
+      await room.save()
 
-      return room.save()
+      return {
+        room,
+      }
     },
   },
 }

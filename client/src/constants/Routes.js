@@ -1,6 +1,7 @@
 export default {
   INDEX: '/',
   ROOM: '/room/:roomId',
+  EDIT_ROOM: '/room/:roomId/edit',
   CREATE_ROOM: '/room/create',
 }
 

@@ -4,7 +4,7 @@ import connectToBaseForm from './connectToBaseForm'
 
 const BaseTextarea = styled.textarea`
   resize: none;
-  height: 100px;
+  height: 90px;
   ${GenericInputStyle}
 `
 

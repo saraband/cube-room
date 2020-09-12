@@ -1,10 +1,13 @@
+/* eslint-disable */
+
+
 import React from 'react'
 import PixelsVisualizer from 'components/PixelsVisualizer/PixelsVisualizer'
 import styled from 'styled-components'
 import { Field } from 'formik'
-import { gql, useMutation } from '@apollo/client'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import Colors from 'constants/Colors'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import Routes, { generateRoute } from 'constants/Routes'
 import BaseInput from 'components/form/BaseInput'
 import BaseTextarea from 'components/form/BaseTextarea'
@@ -19,45 +22,95 @@ import WandSrc from 'assets/icons/wand.svg'
 
 const CREATE_ROOM = gql`
   mutation CreateRoom($input: CreateRoomInput!) {
-    createRoom(input: $input) {
+    manageRoom: createRoom(input: $input) {
+      token
+      room {
+        id
+      }
+    }
+  }
+`
+
+const EDIT_ROOM = gql`
+  mutation EditRoom($input: CreateRoomInput!) {
+    manageRoom: editRoom(input: $input) {
+      room
+    }
+  }
+`
+
+const GET_ROOM = gql`
+  query GetRoom($roomId: ID!) {
+    room(roomId: $roomId) {
       id
       name
       description
+      pixels
     }
   }
 `
 
 const CreateRoomSchema = Yup.object().shape({
   name: Yup.string().required('This field is required'),
+  password: Yup.string().required('This field is required'),
+})
+
+const EditRoomSchema = Yup.object().shape({
+  name: Yup.string().required('This field is required'),
+  password: Yup.string().required('This field is required'),
 })
 
 const BLANK_ROOM_PIXELS = JSON.stringify(new Array(400).fill(15))
 
-function CreateRoom () {
-  useTitle('Cube-room | Create a new room')
+function ManageRoom ({ action }) {
+  const isEdit = action === 'edit'
+  const isCreate = !isEdit
+
+  const cta = isEdit ? 'Edit room' : 'Create a room'
+  useTitle(`Cube-room | ${cta}`)
 
   const history = useHistory()
-  const [createRoom] = useMutation(CREATE_ROOM)
+  const { roomId } = useParams()
+  const [manageRoom] = useMutation(isEdit ? EDIT_ROOM : CREATE_ROOM)
+
+  // Room info for edit page
+  const { loading, data } = useQuery(GET_ROOM, {
+    variables: {
+      roomId,
+    },
+    skip: isCreate,
+  })
+
+  const validationSchema = isEdit ? EditRoomSchema : CreateRoomSchema
+  const formInitialValues = {
+    name: '',
+    description: '',
+    pixels: BLANK_ROOM_PIXELS,
+  }
+
+  if (isCreate) {
+    formInitialValues.password = ''
+  }
 
   return (
-    <Layout title="Create a room" itemsCenter>
+    <Layout title={cta} itemsCenter>
       <StyledForm
         validateOnChange={false}
-        initialValues={{
-          name: '',
-          description: '',
-          pixels: BLANK_ROOM_PIXELS,
-        }}
-        validationSchema={CreateRoomSchema}
+        initialValues={formInitialValues}
+        validationSchema={validationSchema}
         onSubmit={async (values) => {
           try {
-            const { data } = await createRoom({
+            const { data } = await manageRoom({
               variables: {
                 input: values,
               },
             })
 
-            history.push(generateRoute(Routes.ROOM, { roomId: data.createRoom.id }))
+            // Creating a room grants direct edit scope access to it
+            // Update local token
+            localStorage.setItem('token', data.manageRoom.token)
+
+            history.push(generateRoute(Routes.ROOM, { roomId: data.manageRoom.room.id }))
           } catch (error) {
             console.error(error)
           }
@@ -69,11 +122,19 @@ function CreateRoom () {
             name="name"
             placeholder="Name"
           />
+          {isCreate &&
+            <BaseInput
+              name="password"
+              placeholder="Room edit password"
+            />
+          }
           <BaseTextarea
             name="description"
             placeholder="Description"
           />
-          <SubmitButton/>
+          <SubmitButton>
+            {cta}
+          </SubmitButton>
         </Left>
         <Field name="pixels">
           {({ field: { value }, form: { setFieldValue } }) => (
@@ -107,7 +168,6 @@ const Left = styled(Flex).attrs(() => ({
 const SubmitButton = styled(BaseButton).attrs(() => ({
   type: 'submit',
   fullWidth: true,
-  children: 'Create a room',
   icon: WandSrc,
 }))`
   align-self: flex-end;
@@ -118,4 +178,4 @@ const StyledPixelsVisualizer = styled(PixelsVisualizer)`
   border-radius: 4px;
 `
 
-export default CreateRoom
+export default ManageRoom

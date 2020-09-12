@@ -1,4 +1,7 @@
 import { Op } from 'sequelize'
+import jwt from 'jsonwebtoken'
+
+const DAY = 60 * 60 * 24
 
 export async function getRoom (roomId, ctx) {
   const rows = await ctx.db.room.findAll({
@@ -37,4 +40,32 @@ export async function incrementViewsCounter (roomId, ctx) {
 
 export function hasRoomEditScopeAccess (roomId, ctx) {
   return !!ctx?.user?.roomEditScopeAccess?.[roomId]
+}
+
+/**
+ * Add roomId to the list of room edit scope access of current user
+ * and send back an updated token
+ */
+export function generateEditScopeAccessToken(roomId, ctx) {
+  const existingRoomEditScopeAccess = ctx?.user?.roomEditScopeAccess || {}
+  const newRoomEditScopeAccess = {
+    ...existingRoomEditScopeAccess,
+    [roomId]: true,
+  }
+
+  const token = jwt.sign(
+    {
+      roomEditScopeAccess: newRoomEditScopeAccess,
+    },
+    process.env.JWT_KEY || 'developement_key',
+    {  expiresIn: 365 * DAY }, // @TODO refresh tokens
+  )
+
+  // Update ctx.user so sub-resolvers that use ctx.user have correct scope
+  ctx.user = {
+    ...(ctx.user || {}),
+    roomEditScopeAccess: newRoomEditScopeAccess,
+  }
+
+  return token
 }
