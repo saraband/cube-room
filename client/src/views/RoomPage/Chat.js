@@ -10,6 +10,7 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import ChatMessage from './ChatMessage'
 import Faker from 'faker/locale/en'
 import * as Yup from 'yup'
+import ReactTooltip from 'react-tooltip'
 
 const SEND_CHAT_MESSAGE = gql`
   mutation SendChatMessage($input: SendMessageInput!) {
@@ -122,6 +123,8 @@ function Chat () {
 
   return (
     <Container>
+      <ReactTooltip effect='solid'/>
+
       {/* Messages list */}
       <MessagesContainer ref={chatContainerRef}>
         {!data && loading
@@ -140,7 +143,7 @@ function Chat () {
       >
         {(formContext) => (
           <>
-            <UsernameInput/>
+            <UsernameInput data-tip='Choose your username here'/>
             <ChatMessageInput
               onKeyDown={({ key }) => {
                 if (key === 'Enter') {

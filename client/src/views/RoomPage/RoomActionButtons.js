@@ -15,6 +15,7 @@ import BaseInput, { GenericInputStyle } from 'components/form/BaseInput'
 import Colors from 'constants/Colors'
 import { hexToRgbaString } from 'helpers/Color'
 import Routes, { generateRoute } from 'constants/Routes'
+import ReactTooltip from 'react-tooltip'
 
 const UNLOCK_ROOM = gql`
   mutation UnlockRoom($roomId: ID!, $password: String!) {
@@ -31,8 +32,9 @@ const UNLOCK_ROOM = gql`
 export function EditRoomButton ({ roomId, ...rest }) {
   return (
     <Container {...rest}>
+      <ReactTooltip effect='solid'/>
       <Link to={generateRoute(Routes.EDIT_ROOM, { roomId })}>
-        <ActionButton>
+        <ActionButton data-tip='Edit room'>
           <img src={EditSrc} alt='Edit room'/>
         </ActionButton>
       </Link>
@@ -67,7 +69,11 @@ export function UnlockRoomButton ({ roomId, className, ...rest }) {
 
   return (
     <Container {...rest}>
-      <ActionButton onClick={unlockRoom}>
+      <ReactTooltip effect='solid'/>
+      <ActionButton
+        data-tip='You need to unlock the room to edit it'
+        onClick={unlockRoom}
+      >
         <img src={UnlockSrc} alt='Unlock room'/>
       </ActionButton>
       <PasswordInput

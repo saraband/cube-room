@@ -15,6 +15,7 @@ export const GET_ALL_ROOMS = gql`
     allRooms(filters: $filters, offset: $offset, limit: $limit) {
       id
       name
+      description
       pixels
       views
       createdAt

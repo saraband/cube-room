@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import Flex from 'components/ui/Flex'
 import ArrowBackSrc from 'assets/icons/arrow-back.svg'
 import PropTypes from 'prop-types'
+import ReactTooltip from 'react-tooltip'
 
 function Layout (props) {
   const {
@@ -68,6 +69,7 @@ const HomeLink = styled(Link).attrs(() => ({
   display: flex;
   align-items: center;
   margin-right: 16px;
+  margin-top: 4px;
   transition: all 0.15s ease;
   opacity: 0.6;
 
@@ -79,7 +81,9 @@ const HomeLink = styled(Link).attrs(() => ({
 function ArrowBack () {
   return (
     <HomeLink>
+      <ReactTooltip effect='solid'/>
       <img
+        data-tip='Home'
         src={ArrowBackSrc}
         alt="Back to rooms listing"
       />
