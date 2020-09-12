@@ -1,11 +1,10 @@
-/* eslint-disable */
-
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { GenericInputStyle } from './BaseInput'
 import connectToBaseForm from './connectToBaseForm'
 import Colors from 'constants/Colors'
 import ChevronDownSrc from 'assets/icons/chevron-down.svg'
+import PropTypes from 'prop-types'
 
 function BaseSelect ({
   defaultLabel,
@@ -50,7 +49,7 @@ function BaseSelect ({
       target: {
         name,
         value: optionValue,
-      }
+      },
     })
     setDropdownVisible(false)
   }
@@ -83,6 +82,17 @@ function BaseSelect ({
       </Dropdown>
     </Container>
   )
+}
+
+BaseSelect.propTypes = {
+  defaultLabel: PropTypes.string,
+  children: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.any.isRequired,
+    label: PropTypes.string.isRequired,
+  })),
+  name: PropTypes.string,
+  value: PropTypes.any,
+  onChange: PropTypes.func,
 }
 
 const Container = styled.div`

@@ -1,6 +1,3 @@
-/* eslint-disable */
-
-
 import React from 'react'
 import PixelsVisualizer from 'components/PixelsVisualizer/PixelsVisualizer'
 import styled from 'styled-components'
@@ -20,6 +17,7 @@ import Layout from 'components/ui/Layout'
 import useTitle from 'helpers/useTitle'
 import WandSrc from 'assets/icons/wand.svg'
 import BaseLoader from 'components/ui/BaseLoader'
+import PropTypes from 'prop-types'
 
 const CREATE_ROOM = gql`
   mutation CreateRoom($input: CreateRoomInput!) {
@@ -97,7 +95,7 @@ function ManageRoom ({ action }) {
     name: '',
     description: '',
     pixels: BLANK_ROOM_PIXELS,
-    password: ''
+    password: '',
   }
 
   if (isEdit && data) {
@@ -177,6 +175,10 @@ function ManageRoom ({ action }) {
       }
     </Layout>
   )
+}
+
+ManageRoom.propTypes = {
+  action: PropTypes.string.isRequired,
 }
 
 const StyledEditRoomLoader = styled(Flex).attrs(() => ({

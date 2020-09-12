@@ -1,14 +1,8 @@
-/* eslint-disable */
-
 import React, { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { gql, useQuery, useMutation } from '@apollo/client'
-import Layout from 'components/ui/Layout'
+import { Link } from 'react-router-dom'
+import { gql, useMutation } from '@apollo/client'
 import styled from 'styled-components'
 import Flex from 'components/ui/Flex'
-import Chat from './Chat'
-import PixelsVisualizer from 'components/PixelsVisualizer/PixelsVisualizer'
-import useTitle from 'helpers/useTitle'
 import UnlockSrc from 'assets/icons/unlock.svg'
 import EditSrc from 'assets/icons/edit.svg'
 import BaseInput, { GenericInputStyle } from 'components/form/BaseInput'
@@ -16,6 +10,7 @@ import Colors from 'constants/Colors'
 import { hexToRgbaString } from 'helpers/Color'
 import Routes, { generateRoute } from 'constants/Routes'
 import ReactTooltip from 'react-tooltip'
+import PropTypes from 'prop-types'
 
 const UNLOCK_ROOM = gql`
   mutation UnlockRoom($roomId: ID!, $password: String!) {
@@ -29,7 +24,7 @@ const UNLOCK_ROOM = gql`
   }
 `
 
-export function EditRoomButton ({ roomId, ...rest }) {
+function EditRoomButton ({ roomId, ...rest }) {
   return (
     <Container {...rest}>
       <ReactTooltip effect='solid'/>
@@ -42,8 +37,12 @@ export function EditRoomButton ({ roomId, ...rest }) {
   )
 }
 
+EditRoomButton.propTypes = {
+  roomId: PropTypes.string.isRequired,
+}
 
-export function UnlockRoomButton ({ roomId, className, ...rest }) {
+
+function UnlockRoomButton ({ roomId, ...rest }) {
   const [password, setPassword] = useState('')
   const [unlockRoomMutation] = useMutation(UNLOCK_ROOM)
 
@@ -85,6 +84,9 @@ export function UnlockRoomButton ({ roomId, className, ...rest }) {
   )
 }
 
+UnlockRoomButton.propTypes = {
+  roomId: PropTypes.string.isRequired,
+}
 
 const PasswordInput = styled(BaseInput).attrs(() => ({
   placeholder: 'Enter room password',
@@ -95,7 +97,7 @@ const PasswordInput = styled(BaseInput).attrs(() => ({
 `
 
 const Container = styled(Flex).attrs(() => ({
-  justifyCenter: true
+  justifyCenter: true,
 }))`
   position: absolute;
   z-index: 50;
@@ -121,3 +123,8 @@ const ActionButton = styled.button`
     border: 0;
   }
 `
+
+export {
+  EditRoomButton,
+  UnlockRoomButton,
+}
