@@ -22,7 +22,7 @@ function randomPixels () {
     }
   }
 
-  return JSON.stringify(new Array(400).fill(0).map(() => randomRange[randomInteger(0, randomRange.length)]))
+  return JSON.stringify(new Array(400).fill(0).map(() => randomRange[randomInteger(0, randomRange.length - 1)]))
 }
 
 module.exports = {
