@@ -13,7 +13,6 @@ const typeDefs = `
 
   extend type Subscription {
     messageReceived (roomId: ID!): ChatMessage!
-    userJoinedRoom (roomId: ID!): Int! # Count of people connected in the room
   }
 
   input SendMessageInput {

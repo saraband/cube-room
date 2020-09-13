@@ -65,7 +65,7 @@ function Chat () {
 
   const { roomId } = useParams()
   const { loading, data, subscribeToMore } = useQuery(GET_ROOM, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
     variables: {
       roomId,
     },

@@ -16,13 +16,7 @@ import './index.css'
 const HTTP_SERVER_URL = process.env.REACT_APP_HTTP_SERVER_URL || 'http://localhost:4000/graphql'
 const WS_SERVER_URL = process.env.REACT_APP_WS_SERVER_URL || 'ws://localhost:4000/graphql'
 
-const wsLink = new WebSocketLink({
-  uri: WS_SERVER_URL,
-  options: {
-    reconnect: true,
-  },
-})
-
+// Apply auth token (used for editing a room)
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token')
 
@@ -32,6 +26,13 @@ const authLink = setContext((_, { headers }) => {
       authorization: token ? `Bearer ${token}` : '',
     }
   }
+})
+
+const wsLink = new WebSocketLink({
+  uri: WS_SERVER_URL,
+  options: {
+    reconnect: true,
+  },
 })
 
 const httpLink = new HttpLink({

@@ -38,13 +38,14 @@ export async function incrementViewsCounter (roomId, ctx) {
   return null
 }
 
+// Does the current user have the right to edit this room ?
 export function hasRoomEditScopeAccess (roomId, ctx) {
   return !!ctx?.user?.roomEditScopeAccess?.[roomId]
 }
 
 /**
- * Add roomId to the list of room edit scope access of current user
- * and send back an updated token
+ * Add roomId to the list of rooms current user has the right to edit
+ * and send back an updated token that represents that right
  */
 export function generateEditScopeAccessToken(roomId, ctx) {
   const existingRoomEditScopeAccess = ctx?.user?.roomEditScopeAccess || {}

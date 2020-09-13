@@ -8,6 +8,7 @@ function pixelIndexToCanvasCoords (index) {
   return { x, y }
 }
 
+// Draw a pixel on canvas
 export function drawPixel ({
   pixelIndex,
   pixelCoords,

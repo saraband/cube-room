@@ -16,6 +16,7 @@ function BaseSelect ({
 }) {
   const dropdownRef = useRef(null)
   const toggleRef = useRef(null)
+
   const [isDropdownVisible, setDropdownVisible] = useState(false)
   const options = children
 
@@ -39,7 +40,7 @@ function BaseSelect ({
     return () => {
       document.removeEventListener('click', closeDropdown)
     }
-  }, [])
+  }, [setDropdownVisible])
 
   // Determine label for current value
   const currentValueLabel = (options.find((opt) => opt.value === value) || {}).label
@@ -51,6 +52,7 @@ function BaseSelect ({
         value: optionValue,
       },
     })
+
     setDropdownVisible(false)
   }
 

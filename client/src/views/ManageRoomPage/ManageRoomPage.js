@@ -82,7 +82,7 @@ function ManageRoom ({ action }) {
   const { roomId } = useParams()
   const [manageRoom] = useMutation(isEdit ? EDIT_ROOM : CREATE_ROOM)
 
-  // Room info for edit page
+  // Retrieve existing room info for edit
   const { loading, data } = useQuery(GET_ROOM, {
     variables: {
       roomId,
@@ -98,6 +98,7 @@ function ManageRoom ({ action }) {
     password: '',
   }
 
+  // Fiil the form with existing room info when editing a room
   if (isEdit && data) {
     const { room } = data
 
@@ -128,7 +129,7 @@ function ManageRoom ({ action }) {
               const { data } = await manageRoom({ variables })
 
               // Creating a room grants direct edit scope access to it
-              // Update local token
+              // Update local token with new token
               if (isCreate) {
                 localStorage.setItem('token', data.manageRoom.token)
               }

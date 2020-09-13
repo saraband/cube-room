@@ -33,7 +33,7 @@ function RoomLoader () {
 function Room () {
   const { roomId } = useParams()
   const { loading, data } = useQuery(GET_ROOM_INFO, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
     variables: {
       roomId,
     },
@@ -50,7 +50,10 @@ function Room () {
         : (
           <Container>
             <PixelsContainer>
-              {!room.hasEditScope ? <UnlockRoomButton roomId={roomId} /> : <EditRoomButton roomId={roomId}/>}
+              {!room.hasEditScope
+                ? <UnlockRoomButton roomId={roomId} />
+                : <EditRoomButton roomId={roomId}/>
+              }
               <PixelsVisualizer
                 size={500}
                 pixels={room.pixels}

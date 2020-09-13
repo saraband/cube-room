@@ -22,6 +22,10 @@ const OrderByParams = {
   'least-viewed': ['views', 'ASC'],
 }
 
+function sanitizeSearchInput (searchString) {
+  return searchString.replace('%', '\\%')
+}
+
 const resolvers = {
   Query: {
     allRooms: async (root, { filters, offset, limit }, ctx) => {
@@ -41,7 +45,7 @@ const resolvers = {
         if (searchString) {
           params.where = {
             name: {
-              [Op.iLike]: `%${searchString}%`,
+              [Op.iLike]: `%${sanitizeSearchInput(searchString)}%`,
             },
           }
         }
