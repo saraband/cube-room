@@ -4,8 +4,10 @@ import db from '@db/models'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import http from 'http'
+import helmet from 'helmet'
 
 const app = express()
+app.use(helmet())
 
 // Authentication middleware (for room edit scope)
 app.use((req, res, next) => {
