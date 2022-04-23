@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/saraband/cube-room.git",
-  "author": "Yassine <39649144+saraband@users.noreply.github.com>",
+  "author": "Sara <39649144+saraband@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
     "heroku:deploy": "git subtree push --prefix server heroku master"
